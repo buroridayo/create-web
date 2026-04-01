@@ -1,8 +1,8 @@
 export const LAYOUT_TITLES = [
-  "BENTO Grid",
-  "BROKEN Grid",
-  "SIDE BAR",
-  "HOLY GRAIL",
-  "SINGLE COLUMN",
-  "HERO CENTER",
+  { id: "bento", title: "Bento Grid" },
+  { id: "broken", title: "Broken Grid" },
+  { id: "side", title: "Side Bar" },
+  { id: "holy", title: "Holy Grail" },
+  { id: "single", title: "Single Column" },
+  { id: "hero", title: "Hero Center" },
 ];
