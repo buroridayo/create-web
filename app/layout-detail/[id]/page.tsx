@@ -2,6 +2,7 @@
 
 import { use, useState } from "react";
 import ControlPanel from "@/components/control-panel/ControlPanel";
+import { LAYOUT_TITLES } from "@/constants/layouts";
 
 export default function LayoutDetailPage({
   params,
@@ -9,25 +10,35 @@ export default function LayoutDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
+  const currentLayout = LAYOUT_TITLES.find((layout) => layout.id === id);
+
+  // 2. もし見つかればその title を、なければ id を表示するようにする
+  const displayTitle = currentLayout ? currentLayout.title : id;
   const [bgColor, setBgColor] = useState("#ffffff");
   const [textColor, setTextColor] = useState("#000000");
+  const [fontFamily, setFontFamily] = useState("sans-serif");
+  const [fontWeight, setFontWeight] = useState(400);
   const [borderRadius, setBorderRadius] = useState(32);
 
   return (
-    <main className="min-h-screen bg-[#005a8d] flex items-center justify-center p-8 gap-12">
+    <main className="min-h-screen bg-linear-to-br from-[#1e00ff] via-[#7000ff] to-[#f000ff] flex items-center justify-center p-8 gap-12">
       <ControlPanel
         bgColor={bgColor}
         setBgColor={setBgColor}
         textColor={textColor}
         setTextColor={setTextColor}
-        // borderRadius={borderRadius} setBorderRadius={setBorderRadius} // スライダー連動用
+        fontFamily={fontFamily}
+        setFontFamily={setFontFamily}
+        fontWeight={fontWeight}
+        setFontWeight={setFontWeight}
+        borderRadius={borderRadius}
+        setBorderRadius={setBorderRadius}
       />
 
       <section className="flex-1 max-w-4xl h-150 flex flex-col gap-6">
-        {/* ヘッダー部分は元の色（画像のような紫）に戻します */}
-        <div className="bg-[#8a00ff] h-20 rounded-[2.5rem] shadow-lg flex items-center px-10">
-          <h1 className="text-white font-mono text-2xl uppercase font-bold">
-            {id}
+        <div className="bg-linear-to-r from-[#1e00ff] via-[#7000ff]  h-20 rounded-[2.5rem] shadow-lg flex items-center justify-center px-10">
+          <h1 className="text-white font-mono text-3xl uppercase font-bold ">
+            {displayTitle}
           </h1>
         </div>
 
@@ -37,6 +48,8 @@ export default function LayoutDetailPage({
           style={{
             backgroundColor: bgColor,
             color: textColor,
+            fontFamily: fontFamily,
+            fontWeight: fontWeight,
             borderRadius: `${borderRadius}px`,
           }}
         >
