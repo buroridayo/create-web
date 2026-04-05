@@ -18,6 +18,7 @@ import {
 
 interface BentoPreviewProps {
   borderRadius: number;
+  borderColor: string;
   fontFamily: string;
   fontWeight: number;
 }
@@ -73,7 +74,7 @@ const TEAM_DATA = [
   { name: "Casey Moon", role: "Growth", status: "Offline", tasks: 5, initial: "C", color: "bg-amber-400/30" },
 ];
 
-const BentoPreview: React.FC<BentoPreviewProps> = ({ borderRadius, fontFamily, fontWeight }) => {
+const BentoPreview: React.FC<BentoPreviewProps> = ({ borderRadius, borderColor, fontFamily, fontWeight }) => {
   const [navPage, setNavPage] = useState<NavPage>("Dashboard");
   const [activeTab, setActiveTab] = useState<Tab>("Overview");
   const [notifOpen, setNotifOpen] = useState(false);
@@ -83,7 +84,8 @@ const BentoPreview: React.FC<BentoPreviewProps> = ({ borderRadius, fontFamily, f
   const rXs = `${Math.max(borderRadius / 3, 3)}px`;
 
   return (
-    <div className="w-full h-full flex flex-col overflow-hidden" style={{ fontFamily, fontWeight }}>
+    <div className="preview-bento w-full h-full flex flex-col overflow-hidden" style={{ '--bc': borderColor, fontFamily, fontWeight } as React.CSSProperties}>
+      <style>{`.preview-bento [class*="border"] { border-color: var(--bc) !important; }`}</style>
       {/* Header */}
       <div className="flex items-center justify-between px-6 py-3 border-b border-black/5 shrink-0">
         <div className="flex items-center gap-3">
@@ -98,6 +100,7 @@ const BentoPreview: React.FC<BentoPreviewProps> = ({ borderRadius, fontFamily, f
           {NAV_PAGES.map((page) => (
             <button
               key={page}
+              data-preview-nav={page}
               onClick={() => setNavPage(page)}
               className={`px-3 py-1.5 text-xs font-medium uppercase tracking-wider transition-all cursor-pointer ${
                 navPage === page ? "bg-black/10 font-bold opacity-100" : "opacity-40 hover:opacity-70 hover:bg-black/5"
@@ -140,13 +143,14 @@ const BentoPreview: React.FC<BentoPreviewProps> = ({ borderRadius, fontFamily, f
       </div>
 
       {/* ── Dashboard ── */}
-      {navPage === "Dashboard" && (
+      <div data-preview-page="Dashboard" style={{ display: navPage === "Dashboard" ? "contents" : "none" }}>
         <>
           {/* Sub-tabs */}
           <div className="flex gap-1 px-6 pt-3 pb-1 shrink-0">
             {TABS.map((tab) => (
               <button
                 key={tab}
+                data-preview-tab={tab}
                 onClick={() => setActiveTab(tab)}
                 className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
                   activeTab === tab ? "bg-black/10 opacity-100" : "opacity-40 hover:opacity-70"
@@ -158,7 +162,7 @@ const BentoPreview: React.FC<BentoPreviewProps> = ({ borderRadius, fontFamily, f
             ))}
           </div>
           <div className="flex-1 overflow-y-auto p-5">
-            {activeTab === "Overview" && (
+            <div data-preview-tab-page="Overview" style={{ display: activeTab === "Overview" ? "contents" : "none" }}>
               <div className="flex flex-col gap-4">
                 <div className="grid grid-cols-4 gap-3">
                   {STATS.map((stat) => (
@@ -203,8 +207,8 @@ const BentoPreview: React.FC<BentoPreviewProps> = ({ borderRadius, fontFamily, f
                   </div>
                 </div>
               </div>
-            )}
-            {activeTab === "Analytics" && (
+            </div>
+            <div data-preview-tab-page="Analytics" style={{ display: activeTab === "Analytics" ? "contents" : "none" }}>
               <div className="flex flex-col gap-4">
                 <div className="bg-black/3 border border-black/5 p-5" style={{ borderRadius: r }}>
                   <div className="flex justify-between items-center mb-5">
@@ -234,8 +238,8 @@ const BentoPreview: React.FC<BentoPreviewProps> = ({ borderRadius, fontFamily, f
                   ))}
                 </div>
               </div>
-            )}
-            {activeTab === "Reports" && (
+            </div>
+            <div data-preview-tab-page="Reports" style={{ display: activeTab === "Reports" ? "contents" : "none" }}>
               <div className="flex flex-col gap-3">
                 {REPORTS.map((report) => (
                   <div key={report.title} className="bg-black/3 border border-black/5 p-4 flex items-center justify-between hover:bg-black/5 hover:scale-[1.005] transition-all cursor-pointer" style={{ borderRadius: r }}>
@@ -250,13 +254,13 @@ const BentoPreview: React.FC<BentoPreviewProps> = ({ borderRadius, fontFamily, f
                   </div>
                 ))}
               </div>
-            )}
+            </div>
           </div>
         </>
-      )}
+      </div>
 
       {/* ── Projects ── */}
-      {navPage === "Projects" && (
+      <div data-preview-page="Projects" style={{ display: navPage === "Projects" ? "contents" : "none" }}>
         <div className="flex-1 overflow-y-auto p-5">
           <div className="flex justify-between items-center mb-4">
             <h2 className="font-black text-sm uppercase tracking-wider flex items-center gap-2">
@@ -294,10 +298,10 @@ const BentoPreview: React.FC<BentoPreviewProps> = ({ borderRadius, fontFamily, f
             ))}
           </div>
         </div>
-      )}
+      </div>
 
       {/* ── Team ── */}
-      {navPage === "Team" && (
+      <div data-preview-page="Team" style={{ display: navPage === "Team" ? "contents" : "none" }}>
         <div className="flex-1 overflow-y-auto p-5">
           <div className="flex justify-between items-center mb-4">
             <h2 className="font-black text-sm uppercase tracking-wider flex items-center gap-2">
@@ -329,10 +333,10 @@ const BentoPreview: React.FC<BentoPreviewProps> = ({ borderRadius, fontFamily, f
             ))}
           </div>
         </div>
-      )}
+      </div>
 
       {/* ── Settings ── */}
-      {navPage === "Settings" && (
+      <div data-preview-page="Settings" style={{ display: navPage === "Settings" ? "contents" : "none" }}>
         <div className="flex-1 overflow-y-auto p-5">
           <h2 className="font-black text-sm uppercase tracking-wider flex items-center gap-2 mb-4">
             <Settings className="w-4 h-4 opacity-50" /> Settings
@@ -378,7 +382,7 @@ const BentoPreview: React.FC<BentoPreviewProps> = ({ borderRadius, fontFamily, f
             </div>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };

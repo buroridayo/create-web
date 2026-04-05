@@ -5,6 +5,7 @@ import { Heart, Bookmark, Share2, ArrowUp } from "lucide-react";
 
 interface SinglePreviewProps {
   borderRadius: number;
+  borderColor: string;
   fontFamily: string;
   fontWeight: number;
 }
@@ -33,7 +34,7 @@ const FOLLOWING_AUTHORS = [
   { name: "Jordan Lee", role: "UX Researcher", initial: "J", color: "bg-rose-400/30", latest: "Designing for Zero UI", latestDate: "Apr 3" },
 ];
 
-const SinglePreview: React.FC<SinglePreviewProps> = ({ borderRadius, fontFamily, fontWeight }) => {
+const SinglePreview: React.FC<SinglePreviewProps> = ({ borderRadius, borderColor, fontFamily, fontWeight }) => {
   const [navPage, setNavPage] = useState<NavPage>("Reading");
   const [liked, setLiked] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
@@ -62,7 +63,8 @@ const SinglePreview: React.FC<SinglePreviewProps> = ({ borderRadius, fontFamily,
   }, [navPage]);
 
   return (
-    <div ref={containerRef} className="w-full h-full overflow-y-auto relative" style={{ fontFamily, fontWeight }}>
+    <div ref={containerRef} className="preview-single w-full h-full overflow-y-auto relative" style={{ '--bc': borderColor, fontFamily, fontWeight } as React.CSSProperties}>
+      <style>{`.preview-single [class*="border"] { border-color: var(--bc) !important; }`}</style>
       {/* Reading progress bar */}
       <div className="sticky top-0 z-10 h-1 bg-black/5">
         <div className="h-full bg-indigo-500/50 transition-all duration-150" style={{ width: `${scrollProgress}%` }} />
@@ -80,6 +82,7 @@ const SinglePreview: React.FC<SinglePreviewProps> = ({ borderRadius, fontFamily,
           {NAV_PAGES.map((page) => (
             <button
               key={page}
+              data-preview-nav={page}
               onClick={() => setNavPage(page)}
               className={`text-xs px-3 py-1.5 font-medium transition-all cursor-pointer ${
                 navPage === page ? "bg-black/10 font-bold opacity-100" : "opacity-40 hover:opacity-70 hover:bg-black/5"
@@ -96,7 +99,7 @@ const SinglePreview: React.FC<SinglePreviewProps> = ({ borderRadius, fontFamily,
       </div>
 
       {/* ── Reading ── */}
-      {navPage === "Reading" && (
+      <div data-preview-page="Reading" style={{ display: navPage === "Reading" ? "contents" : "none" }}>
         <div className="max-w-xl mx-auto px-6 py-10 flex flex-col gap-8">
           <div className="flex flex-col gap-4">
             <div className="flex gap-2 flex-wrap">
@@ -194,10 +197,10 @@ const SinglePreview: React.FC<SinglePreviewProps> = ({ borderRadius, fontFamily,
             </div>
           </div>
         </div>
-      )}
+      </div>
 
       {/* ── Library ── */}
-      {navPage === "Library" && (
+      <div data-preview-page="Library" style={{ display: navPage === "Library" ? "contents" : "none" }}>
         <div className="max-w-xl mx-auto px-6 py-10 flex flex-col gap-6">
           <div>
             <h1 className="text-3xl font-black">Library</h1>
@@ -226,10 +229,10 @@ const SinglePreview: React.FC<SinglePreviewProps> = ({ borderRadius, fontFamily,
             ))}
           </div>
         </div>
-      )}
+      </div>
 
       {/* ── Following ── */}
-      {navPage === "Following" && (
+      <div data-preview-page="Following" style={{ display: navPage === "Following" ? "contents" : "none" }}>
         <div className="max-w-xl mx-auto px-6 py-10 flex flex-col gap-6">
           <div>
             <h1 className="text-3xl font-black">Following</h1>
@@ -256,10 +259,10 @@ const SinglePreview: React.FC<SinglePreviewProps> = ({ borderRadius, fontFamily,
             ))}
           </div>
         </div>
-      )}
+      </div>
 
       {/* ── Profile ── */}
-      {navPage === "Profile" && (
+      <div data-preview-page="Profile" style={{ display: navPage === "Profile" ? "contents" : "none" }}>
         <div className="max-w-xl mx-auto px-6 py-10 flex flex-col gap-8">
           <div className="flex items-center gap-5">
             <div className="w-16 h-16 rounded-full bg-indigo-400/30 flex items-center justify-center text-2xl font-black shrink-0">U</div>
@@ -297,7 +300,7 @@ const SinglePreview: React.FC<SinglePreviewProps> = ({ borderRadius, fontFamily,
             </div>
           </div>
         </div>
-      )}
+      </div>
 
       {/* Scroll to top */}
       {scrollProgress > 20 && navPage === "Reading" && (

@@ -8,9 +8,11 @@ interface ControlPanelProps {
   setBgColor: (color: string) => void;
   textColor: string;
   setTextColor: (color: string) => void;
+  borderColor: string;
+  setBorderColor: (color: string) => void;
   fontFamily: string;
   setFontFamily: (font: string) => void;
-  fontWeight: number; // 追加
+  fontWeight: number;
   setFontWeight: (weight: number) => void;
   borderRadius: number;
   setBorderRadius: (radius: number) => void;
@@ -21,6 +23,8 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
   setBgColor,
   textColor,
   setTextColor,
+  borderColor,
+  setBorderColor,
   fontFamily,
   setFontFamily,
   fontWeight,
@@ -41,6 +45,10 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
 
         <ControlItem label="Color">
           <ColorPicker color={textColor} onChange={setTextColor} />
+        </ControlItem>
+
+        <ControlItem label="Border-Color">
+          <ColorPicker color={borderColor} onChange={setBorderColor} />
         </ControlItem>
 
         <ControlItem label="Font-Family">

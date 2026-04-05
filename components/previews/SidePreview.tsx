@@ -11,6 +11,7 @@ import {
 
 interface SidePreviewProps {
   borderRadius: number;
+  borderColor: string;
   fontFamily: string;
   fontWeight: number;
 }
@@ -47,6 +48,7 @@ const PROJECT_DATA = [
 
 const SidePreview: React.FC<SidePreviewProps> = ({
   borderRadius,
+  borderColor,
   fontFamily,
   fontWeight,
 }) => {
@@ -57,9 +59,10 @@ const SidePreview: React.FC<SidePreviewProps> = ({
 
   return (
     <div
-      className="w-full h-full flex overflow-hidden"
-      style={{ fontFamily, fontWeight }}
+      className="preview-side w-full h-full flex overflow-hidden"
+      style={{ '--bc': borderColor, fontFamily, fontWeight } as React.CSSProperties}
     >
+      <style>{`.preview-side [class*="border"] { border-color: var(--bc) !important; }`}</style>
       {/* Sidebar */}
       <aside className="w-48 shrink-0 border-r border-black/5 flex flex-col">
         <div className="p-4 border-b border-black/5">
@@ -71,6 +74,7 @@ const SidePreview: React.FC<SidePreviewProps> = ({
           {NAV_ITEMS.map(({ label, icon: Icon }) => (
             <button
               key={label}
+              data-preview-nav={label}
               onClick={() => setActivePage(label)}
               className={`flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-left transition-all cursor-pointer ${
                 activePage === label
@@ -101,7 +105,7 @@ const SidePreview: React.FC<SidePreviewProps> = ({
       {/* Main */}
       <main className="flex-1 overflow-y-auto p-6">
         {/* Dashboard */}
-        {activePage === "Dashboard" && (
+        <div data-preview-page="Dashboard" style={{ display: activePage === "Dashboard" ? "contents" : "none" }}>
           <div className="flex flex-col gap-5">
             <div>
               <h2 className="text-xl font-black">Good morning 👋</h2>
@@ -152,10 +156,10 @@ const SidePreview: React.FC<SidePreviewProps> = ({
               </div>
             </div>
           </div>
-        )}
+        </div>
 
         {/* Articles */}
-        {activePage === "Articles" && (
+        <div data-preview-page="Articles" style={{ display: activePage === "Articles" ? "contents" : "none" }}>
           <div className="flex flex-col gap-4">
             <div className="flex justify-between items-center">
               <h2 className="text-xl font-black">Articles</h2>
@@ -193,10 +197,10 @@ const SidePreview: React.FC<SidePreviewProps> = ({
               ))}
             </div>
           </div>
-        )}
+        </div>
 
         {/* Projects */}
-        {activePage === "Projects" && (
+        <div data-preview-page="Projects" style={{ display: activePage === "Projects" ? "contents" : "none" }}>
           <div className="flex flex-col gap-4">
             <h2 className="text-xl font-black">Projects</h2>
             <div className="flex flex-col gap-3">
@@ -226,10 +230,10 @@ const SidePreview: React.FC<SidePreviewProps> = ({
               ))}
             </div>
           </div>
-        )}
+        </div>
 
         {/* Settings */}
-        {activePage === "Settings" && (
+        <div data-preview-page="Settings" style={{ display: activePage === "Settings" ? "contents" : "none" }}>
           <div className="flex flex-col gap-5">
             <h2 className="text-xl font-black">Settings</h2>
             {[
@@ -255,7 +259,7 @@ const SidePreview: React.FC<SidePreviewProps> = ({
               </div>
             ))}
           </div>
-        )}
+        </div>
       </main>
     </div>
   );

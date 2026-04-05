@@ -5,6 +5,7 @@ import { Menu, X, Check, Zap, Shield, Globe, BookOpen, ChevronRight } from "luci
 
 interface HeroPreviewProps {
   borderRadius: number;
+  borderColor: string;
   fontFamily: string;
   fontWeight: number;
 }
@@ -39,7 +40,7 @@ const FAQ = [
   { q: "Do you offer discounts for startups?", a: "Yes — apply to our Startup Program for 50% off your first year." },
 ];
 
-const HeroPreview: React.FC<HeroPreviewProps> = ({ borderRadius, fontFamily, fontWeight }) => {
+const HeroPreview: React.FC<HeroPreviewProps> = ({ borderRadius, borderColor, fontFamily, fontWeight }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState<Page>("Product");
   const [modalOpen, setModalOpen] = useState(false);
@@ -61,7 +62,8 @@ const HeroPreview: React.FC<HeroPreviewProps> = ({ borderRadius, fontFamily, fon
   };
 
   return (
-    <div ref={containerRef} className="w-full h-full overflow-y-auto flex flex-col" style={{ fontFamily, fontWeight }}>
+    <div ref={containerRef} className="preview-hero w-full h-full overflow-y-auto flex flex-col" style={{ '--bc': borderColor, fontFamily, fontWeight } as React.CSSProperties}>
+      <style>{`.preview-hero [class*="border"] { border-color: var(--bc) !important; }`}</style>
       {/* Navbar */}
       <nav className="sticky top-0 z-10 flex justify-between items-center px-8 py-4 backdrop-blur-sm bg-inherit border-b border-black/5">
         <button
@@ -74,6 +76,7 @@ const HeroPreview: React.FC<HeroPreviewProps> = ({ borderRadius, fontFamily, fon
           {NAV_ITEMS.map((item) => (
             <button
               key={item}
+              data-preview-nav={item}
               onClick={() => handleNav(item)}
               className={`text-xs px-4 py-1.5 font-medium uppercase tracking-wider transition-all cursor-pointer ${
                 currentPage === item
@@ -116,7 +119,7 @@ const HeroPreview: React.FC<HeroPreviewProps> = ({ borderRadius, fontFamily, fon
       )}
 
       {/* ── Product ── */}
-      {currentPage === "Product" && (
+      <div data-preview-page="Product" style={{ display: currentPage === "Product" ? "contents" : "none" }}>
         <>
           <div className="px-8 py-20 flex flex-col items-center text-center gap-6">
             <span className="text-[10px] font-bold uppercase tracking-[0.4em] opacity-30 px-4 py-1.5 bg-black/5 rounded-full">Now in public beta</span>
@@ -155,10 +158,10 @@ const HeroPreview: React.FC<HeroPreviewProps> = ({ borderRadius, fontFamily, fon
             </div>
           </div>
         </>
-      )}
+      </div>
 
       {/* ── Pricing ── */}
-      {currentPage === "Pricing" && (
+      <div data-preview-page="Pricing" style={{ display: currentPage === "Pricing" ? "contents" : "none" }}>
         <div className="px-8 py-16 flex flex-col gap-10">
           <div className="text-center flex flex-col gap-3">
             <p className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-25">Pricing</p>
@@ -211,10 +214,10 @@ const HeroPreview: React.FC<HeroPreviewProps> = ({ borderRadius, fontFamily, fon
             ))}
           </div>
         </div>
-      )}
+      </div>
 
       {/* ── Docs ── */}
-      {currentPage === "Docs" && (
+      <div data-preview-page="Docs" style={{ display: currentPage === "Docs" ? "contents" : "none" }}>
         <div className="flex flex-1 min-h-0 overflow-hidden" style={{ height: "calc(100% - 57px)" }}>
           {/* Sidebar */}
           <aside className="w-48 shrink-0 border-r border-black/5 p-4 overflow-y-auto">
@@ -283,10 +286,10 @@ const HeroPreview: React.FC<HeroPreviewProps> = ({ borderRadius, fontFamily, fon
             )}
           </main>
         </div>
-      )}
+      </div>
 
       {/* ── Blog ── */}
-      {currentPage === "Blog" && (
+      <div data-preview-page="Blog" style={{ display: currentPage === "Blog" ? "contents" : "none" }}>
         <div className="px-8 py-12 flex flex-col gap-8">
           <div>
             <p className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-25 mb-2">Blog</p>
@@ -324,7 +327,7 @@ const HeroPreview: React.FC<HeroPreviewProps> = ({ borderRadius, fontFamily, fon
             ))}
           </div>
         </div>
-      )}
+      </div>
 
       {/* Footer */}
       <div className="mt-auto px-8 py-5 border-t border-black/5 flex justify-between items-center">

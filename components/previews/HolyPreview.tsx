@@ -4,6 +4,7 @@ import React, { useState } from "react";
 
 interface HolyPreviewProps {
   borderRadius: number;
+  borderColor: string;
   fontFamily: string;
   fontWeight: number;
 }
@@ -42,7 +43,7 @@ const AUTHORS_DATA = [
 
 const TRENDING = ["CSS Grid", "TypeScript 5.0", "AI Design Tools", "Headless CMS"];
 
-const HolyPreview: React.FC<HolyPreviewProps> = ({ borderRadius, fontFamily, fontWeight }) => {
+const HolyPreview: React.FC<HolyPreviewProps> = ({ borderRadius, borderColor, fontFamily, fontWeight }) => {
   const [currentPage, setCurrentPage] = useState<MainPage>("Home");
   const [activeCategory, setActiveCategory] = useState<Category>("All");
   const [selectedTitle, setSelectedTitle] = useState<string | null>(null);
@@ -54,7 +55,8 @@ const HolyPreview: React.FC<HolyPreviewProps> = ({ borderRadius, fontFamily, fon
   const filteredArticles = activeCategory === "All" ? ARTICLES : ARTICLES.filter((a) => a.category === activeCategory);
 
   return (
-    <div className="w-full h-full flex flex-col" style={{ fontFamily, fontWeight }}>
+    <div className="preview-holy w-full h-full flex flex-col" style={{ '--bc': borderColor, fontFamily, fontWeight } as React.CSSProperties}>
+      <style>{`.preview-holy [class*="border"] { border-color: var(--bc) !important; }`}</style>
       {/* Header */}
       <header className="px-6 py-4 border-b border-black/5 flex justify-between items-center shrink-0">
         <button className="font-black text-base uppercase tracking-widest cursor-pointer hover:opacity-70 transition-opacity" onClick={() => setCurrentPage("Home")}>
@@ -64,6 +66,7 @@ const HolyPreview: React.FC<HolyPreviewProps> = ({ borderRadius, fontFamily, fon
           {HEADER_NAV.map((item) => (
             <button
               key={item}
+              data-preview-nav={item}
               onClick={() => setCurrentPage(item)}
               className={`text-xs px-3 py-1.5 font-medium transition-all cursor-pointer ${
                 currentPage === item ? "bg-black/10 font-bold opacity-100" : "opacity-40 hover:opacity-80 hover:bg-black/5"
@@ -83,7 +86,7 @@ const HolyPreview: React.FC<HolyPreviewProps> = ({ borderRadius, fontFamily, fon
       <div className="flex-1 flex min-h-0">
         {/* Left sidebar */}
         <aside className="w-44 shrink-0 border-r border-black/5 p-4 overflow-y-auto">
-          {currentPage === "Home" && (
+          <div data-preview-page="Home" style={{ display: currentPage === "Home" ? "contents" : "none" }}>
             <>
               <p className="text-[10px] font-black uppercase tracking-widest opacity-25 mb-3">Topics</p>
               <nav className="flex flex-col gap-1">
@@ -101,8 +104,8 @@ const HolyPreview: React.FC<HolyPreviewProps> = ({ borderRadius, fontFamily, fon
                 ))}
               </nav>
             </>
-          )}
-          {currentPage === "Topics" && (
+          </div>
+          <div data-preview-page="Topics" style={{ display: currentPage === "Topics" ? "contents" : "none" }}>
             <>
               <p className="text-[10px] font-black uppercase tracking-widest opacity-25 mb-3">Browse</p>
               <nav className="flex flex-col gap-1">
@@ -114,8 +117,8 @@ const HolyPreview: React.FC<HolyPreviewProps> = ({ borderRadius, fontFamily, fon
                 ))}
               </nav>
             </>
-          )}
-          {currentPage === "Authors" && (
+          </div>
+          <div data-preview-page="Authors" style={{ display: currentPage === "Authors" ? "contents" : "none" }}>
             <>
               <p className="text-[10px] font-black uppercase tracking-widest opacity-25 mb-3">Filter</p>
               <nav className="flex flex-col gap-1">
@@ -126,8 +129,8 @@ const HolyPreview: React.FC<HolyPreviewProps> = ({ borderRadius, fontFamily, fon
                 ))}
               </nav>
             </>
-          )}
-          {currentPage === "About" && (
+          </div>
+          <div data-preview-page="About" style={{ display: currentPage === "About" ? "contents" : "none" }}>
             <>
               <p className="text-[10px] font-black uppercase tracking-widest opacity-25 mb-3">Jump to</p>
               <nav className="flex flex-col gap-1">
@@ -138,13 +141,13 @@ const HolyPreview: React.FC<HolyPreviewProps> = ({ borderRadius, fontFamily, fon
                 ))}
               </nav>
             </>
-          )}
+          </div>
         </aside>
 
         {/* Main */}
         <main className="flex-1 overflow-y-auto p-5">
           {/* Home */}
-          {currentPage === "Home" && (
+          <div data-preview-page="Home" style={{ display: currentPage === "Home" ? "contents" : "none" }}>
             <>
               <div className="flex justify-between items-center mb-4">
                 <h2 className="font-black text-sm uppercase tracking-wider">
@@ -185,10 +188,10 @@ const HolyPreview: React.FC<HolyPreviewProps> = ({ borderRadius, fontFamily, fon
                 ))}
               </div>
             </>
-          )}
+          </div>
 
           {/* Topics */}
-          {currentPage === "Topics" && (
+          <div data-preview-page="Topics" style={{ display: currentPage === "Topics" ? "contents" : "none" }}>
             <div className="flex flex-col gap-4">
               <h2 className="font-black text-sm uppercase tracking-wider">All Topics</h2>
               <div className="grid grid-cols-2 gap-3">
@@ -205,10 +208,10 @@ const HolyPreview: React.FC<HolyPreviewProps> = ({ borderRadius, fontFamily, fon
                 ))}
               </div>
             </div>
-          )}
+          </div>
 
           {/* Authors */}
-          {currentPage === "Authors" && (
+          <div data-preview-page="Authors" style={{ display: currentPage === "Authors" ? "contents" : "none" }}>
             <div className="flex flex-col gap-4">
               <h2 className="font-black text-sm uppercase tracking-wider">Contributors</h2>
               <div className="flex flex-col gap-3">
@@ -229,10 +232,10 @@ const HolyPreview: React.FC<HolyPreviewProps> = ({ borderRadius, fontFamily, fon
                 ))}
               </div>
             </div>
-          )}
+          </div>
 
           {/* About */}
-          {currentPage === "About" && (
+          <div data-preview-page="About" style={{ display: currentPage === "About" ? "contents" : "none" }}>
             <div className="flex flex-col gap-8">
               <div>
                 <h2 className="font-black text-sm uppercase tracking-wider mb-3">Mission</h2>
@@ -262,7 +265,7 @@ const HolyPreview: React.FC<HolyPreviewProps> = ({ borderRadius, fontFamily, fon
                 <p className="text-xs opacity-50">hello@thebrief.co · <span className="underline cursor-pointer">Twitter</span></p>
               </div>
             </div>
-          )}
+          </div>
         </main>
 
         {/* Right sidebar */}
@@ -280,7 +283,7 @@ const HolyPreview: React.FC<HolyPreviewProps> = ({ borderRadius, fontFamily, fon
               </div>
             </>
           )}
-          {currentPage === "Authors" && (
+          <div data-preview-page="Authors" style={{ display: currentPage === "Authors" ? "contents" : "none" }}>
             <>
               <p className="text-[10px] font-black uppercase tracking-widest opacity-25 mb-3">Featured</p>
               <div className="flex flex-col items-center gap-2 p-3 bg-black/3 border border-black/5" style={{ borderRadius: r }}>
@@ -289,8 +292,8 @@ const HolyPreview: React.FC<HolyPreviewProps> = ({ borderRadius, fontFamily, fon
                 <p className="text-[10px] opacity-40 text-center">24 articles · Design Lead</p>
               </div>
             </>
-          )}
-          {currentPage === "About" && (
+          </div>
+          <div data-preview-page="About" style={{ display: currentPage === "About" ? "contents" : "none" }}>
             <>
               <p className="text-[10px] font-black uppercase tracking-widest opacity-25 mb-3">Follow us</p>
               <div className="flex flex-col gap-1">
@@ -299,7 +302,7 @@ const HolyPreview: React.FC<HolyPreviewProps> = ({ borderRadius, fontFamily, fon
                 ))}
               </div>
             </>
-          )}
+          </div>
           <div className="mt-4">
             <p className="text-[10px] font-black uppercase tracking-widest opacity-25 mb-3">Newsletter</p>
             <p className="text-[10px] opacity-40 leading-relaxed mb-2">Weekly. No spam.</p>

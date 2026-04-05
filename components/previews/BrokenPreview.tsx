@@ -5,6 +5,7 @@ import { X, ExternalLink, GitBranch, Menu } from "lucide-react";
 
 interface BrokenPreviewProps {
   borderRadius: number;
+  borderColor: string;
   fontFamily: string;
   fontWeight: number;
 }
@@ -103,6 +104,7 @@ const PROCESS_STEPS = [
 
 const BrokenPreview: React.FC<BrokenPreviewProps> = ({
   borderRadius,
+  borderColor,
   fontFamily,
   fontWeight,
 }) => {
@@ -127,9 +129,10 @@ const BrokenPreview: React.FC<BrokenPreviewProps> = ({
   return (
     <div
       ref={containerRef}
-      className="w-full h-full overflow-y-auto flex flex-col"
-      style={{ fontFamily, fontWeight }}
+      className="preview-broken w-full h-full overflow-y-auto flex flex-col"
+      style={{ '--bc': borderColor, fontFamily, fontWeight } as React.CSSProperties}
     >
+      <style>{`.preview-broken [class*="border"] { border-color: var(--bc) !important; }`}</style>
       {/* Nav */}
       <nav className="sticky top-0 z-10 flex justify-between items-center px-8 py-4 backdrop-blur-sm bg-inherit border-b border-black/5">
         <button
@@ -142,6 +145,7 @@ const BrokenPreview: React.FC<BrokenPreviewProps> = ({
           {NAV_LINKS.map((link) => (
             <button
               key={link}
+              data-preview-nav={link}
               onClick={() => handleNav(link)}
               className={`text-sm px-4 py-1.5 font-medium transition-all cursor-pointer ${
                 currentPage === link
@@ -169,6 +173,7 @@ const BrokenPreview: React.FC<BrokenPreviewProps> = ({
           {NAV_LINKS.map((link) => (
             <button
               key={link}
+              data-preview-nav={link}
               onClick={() => handleNav(link)}
               className={`text-sm py-2 text-left cursor-pointer transition-opacity ${
                 currentPage === link ? "font-bold opacity-100" : "opacity-60 hover:opacity-100"
@@ -181,7 +186,7 @@ const BrokenPreview: React.FC<BrokenPreviewProps> = ({
       )}
 
       {/* ── Work ── */}
-      {currentPage === "Work" && (
+      <div data-preview-page="Work" style={{ display: currentPage === "Work" ? "contents" : "none" }}>
         <>
           <div className="px-8 pt-14 pb-10">
             <p className="text-xs font-bold uppercase tracking-[0.4em] opacity-25 mb-4">
@@ -231,10 +236,10 @@ const BrokenPreview: React.FC<BrokenPreviewProps> = ({
             </div>
           </div>
         </>
-      )}
+      </div>
 
       {/* ── About ── */}
-      {currentPage === "About" && (
+      <div data-preview-page="About" style={{ display: currentPage === "About" ? "contents" : "none" }}>
         <div className="px-8 py-14 flex flex-col gap-12">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.4em] opacity-25 mb-4">About</p>
@@ -278,10 +283,10 @@ const BrokenPreview: React.FC<BrokenPreviewProps> = ({
             </div>
           </div>
         </div>
-      )}
+      </div>
 
       {/* ── Process ── */}
-      {currentPage === "Process" && (
+      <div data-preview-page="Process" style={{ display: currentPage === "Process" ? "contents" : "none" }}>
         <div className="px-8 py-14 flex flex-col gap-10">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.4em] opacity-25 mb-4">Process</p>
@@ -330,10 +335,10 @@ const BrokenPreview: React.FC<BrokenPreviewProps> = ({
             ))}
           </div>
         </div>
-      )}
+      </div>
 
       {/* ── Contact ── */}
-      {currentPage === "Contact" && (
+      <div data-preview-page="Contact" style={{ display: currentPage === "Contact" ? "contents" : "none" }}>
         <div className="px-8 py-14 flex flex-col gap-10 max-w-2xl">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.4em] opacity-25 mb-4">Contact</p>
@@ -398,7 +403,7 @@ const BrokenPreview: React.FC<BrokenPreviewProps> = ({
             ))}
           </div>
         </div>
-      )}
+      </div>
 
       {/* Footer */}
       <div className="mt-auto px-8 py-5 border-t border-black/5 flex justify-between items-center">
