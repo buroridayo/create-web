@@ -1,8 +1,30 @@
 "use client";
 
 import { use, useState } from "react";
+import Link from "next/link";
 import ControlPanel from "@/components/control-panel/ControlPanel";
 import { LAYOUT_TITLES } from "@/constants/layouts";
+import BentoPreview from "@/components/previews/BentoPreview";
+import BrokenPreview from "@/components/previews/BrokenPreview";
+import HeroPreview from "@/components/previews/HeroPreview";
+import HolyPreview from "@/components/previews/HolyPreview";
+import SidePreview from "@/components/previews/SidePreview";
+import SinglePreview from "@/components/previews/SinglePreview";
+
+interface PreviewProps {
+  borderRadius: number;
+  fontFamily: string;
+  fontWeight: number;
+}
+
+const PREVIEW_MAP: Record<string, React.FC<PreviewProps>> = {
+  bento: BentoPreview,
+  broken: BrokenPreview,
+  hero: HeroPreview,
+  holy: HolyPreview,
+  side: SidePreview,
+  single: SinglePreview,
+};
 
 export default function LayoutDetailPage({
   params,
@@ -11,58 +33,85 @@ export default function LayoutDetailPage({
 }) {
   const { id } = use(params);
   const currentLayout = LAYOUT_TITLES.find((layout) => layout.id === id);
-
-  // 2. もし見つかればその title を、なければ id を表示するようにする
   const displayTitle = currentLayout ? currentLayout.title : id;
+
   const [bgColor, setBgColor] = useState("#ffffff");
   const [textColor, setTextColor] = useState("#000000");
   const [fontFamily, setFontFamily] = useState("sans-serif");
   const [fontWeight, setFontWeight] = useState(400);
-  const [borderRadius, setBorderRadius] = useState(32);
+  const [borderRadius, setBorderRadius] = useState(16);
+  const [panelOpen, setPanelOpen] = useState(true);
+
+  const PreviewComponent = PREVIEW_MAP[id];
 
   return (
-    <main className="min-h-screen bg-linear-to-br from-[#1e00ff] via-[#7000ff] to-[#f000ff] flex items-center justify-center p-8 gap-12">
-      <ControlPanel
-        bgColor={bgColor}
-        setBgColor={setBgColor}
-        textColor={textColor}
-        setTextColor={setTextColor}
-        fontFamily={fontFamily}
-        setFontFamily={setFontFamily}
-        fontWeight={fontWeight}
-        setFontWeight={setFontWeight}
-        borderRadius={borderRadius}
-        setBorderRadius={setBorderRadius}
-      />
+    <main className="h-screen flex flex-col bg-linear-to-br from-[#1e00ff] via-[#7000ff] to-[#f000ff] overflow-hidden">
+      {/* Top bar */}
+      <div className="flex items-center justify-between px-5 h-14 shrink-0">
+        <Link
+          href="/"
+          className="text-white/50 font-mono text-xs hover:text-white transition-colors tracking-wider"
+        >
+          ← lati CSS
+        </Link>
+        <h1 className="text-white font-mono text-sm uppercase font-bold tracking-[0.3em]">
+          {displayTitle}
+        </h1>
+        <button
+          onClick={() => setPanelOpen(!panelOpen)}
+          className="text-white font-mono text-xs px-4 py-1.5 bg-white/10 hover:bg-white/20 rounded-full transition-colors border border-white/20 cursor-pointer"
+        >
+          {panelOpen ? "Hide Panel" : "CSS Design ⚙"}
+        </button>
+      </div>
 
-      <section className="flex-1 max-w-4xl h-150 flex flex-col gap-6">
-        <div className="bg-linear-to-r from-[#1e00ff] via-[#7000ff]  h-20 rounded-[2.5rem] shadow-lg flex items-center justify-center px-10">
-          <h1 className="text-white font-mono text-3xl uppercase font-bold ">
-            {displayTitle}
-          </h1>
+      {/* Content area */}
+      <div className="flex-1 flex gap-3 px-3 pb-3 min-h-0">
+        {/* ControlPanel - collapsible */}
+        <div
+          className={`transition-all duration-300 overflow-hidden shrink-0 ${
+            panelOpen ? "w-[320px] opacity-100" : "w-0 opacity-0"
+          }`}
+        >
+          <div className="w-[320px] h-full overflow-y-auto">
+            <ControlPanel
+              bgColor={bgColor}
+              setBgColor={setBgColor}
+              textColor={textColor}
+              setTextColor={setTextColor}
+              fontFamily={fontFamily}
+              setFontFamily={setFontFamily}
+              fontWeight={fontWeight}
+              setFontWeight={setFontWeight}
+              borderRadius={borderRadius}
+              setBorderRadius={setBorderRadius}
+            />
+          </div>
         </div>
 
-        {/* ★ここが Preview Area です */}
+        {/* Preview area */}
         <div
-          className="flex-1 shadow-inner p-10 flex items-center justify-center transition-all duration-300"
+          className="flex-1 overflow-hidden transition-all duration-300"
           style={{
             backgroundColor: bgColor,
             color: textColor,
-            fontFamily: fontFamily,
-            fontWeight: fontWeight,
-            borderRadius: `${borderRadius}px`,
           }}
         >
-          <div className="text-center">
-            <p className="text-4xl font-black uppercase tracking-tighter">
-              Preview Content
-            </p>
-            <p className="mt-2 opacity-70">
-              The styles from the left panel are applied here!
-            </p>
-          </div>
+          {PreviewComponent ? (
+            <PreviewComponent
+              borderRadius={borderRadius}
+              fontFamily={fontFamily}
+              fontWeight={fontWeight}
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <p className="text-4xl font-black uppercase tracking-tighter opacity-20">
+                {displayTitle}
+              </p>
+            </div>
+          )}
         </div>
-      </section>
+      </div>
     </main>
   );
 }
